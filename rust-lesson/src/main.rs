@@ -7,7 +7,13 @@
 // mod enums;
 // mod traits;
 // mod error_handling;
-mod unit_test;
+// mod debug;
+// mod unit_test;
+// extern crate lib_demo;
+// mod three_five;
+// mod three;
+// mod hashmap;
+mod eight;
 
 fn main() {
   // vars::run();
@@ -19,4 +25,10 @@ fn main() {
   // enums::run();
   // traits::run();
   // error_handling::run();
+  // debug::run();
+  // lib_demo::print_random_number();
+  // three_five::run();
+  // three::run();
+  // hashmap::run();
+  eight::run();
 }
