@@ -52,3 +52,20 @@ fn calculate_mode(list: &Vec<i32>) -> &i32 {
   }
   mode
 }
+
+#[cfg(test)]
+mod tests {
+  use super::*;
+  #[test]
+  fn test_calculate_mean() {
+    let list = vec![1, 2, 5, 10, 9, 2, 1, 4, 6, 2, 8, 15, 8];
+    assert_eq!(calculate_mean(&list), 5);
+  }
+
+  #[test]
+  #[ignore]
+  fn test_calculate_median() {
+    let mut list = vec![1, 2, 5, 10, 9, 2, 1, 4, 6, 2, 8, 15, 8];
+    assert_eq!(calculate_median(&mut list), 15);
+  }
+}
