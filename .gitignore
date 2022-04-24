@@ -1,1 +1,10 @@
-rust-lesson/target/
+rust-lesson/target/*
+**/debug/*
+guessing_game/target/*
+lib_demo/target/*
+
+Cargo.lock
+
+**/*.rs.bk
+
+*.pdb

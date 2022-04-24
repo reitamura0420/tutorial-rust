@@ -13,7 +13,8 @@
 // mod three_five;
 // mod three;
 // mod hashmap;
-mod eight;
+// mod eight;
+mod eight_three;
 
 fn main() {
   // vars::run();
@@ -30,5 +31,6 @@ fn main() {
   // three_five::run();
   // three::run();
   // hashmap::run();
-  eight::run();
+  // eight::run();
+  eight_three::run();
 }
