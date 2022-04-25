@@ -16,7 +16,10 @@
 // mod eight;
 // mod eight_three;
 // mod threeteen;
-mod iteretor;
+// mod iteretor;
+// mod deref;
+// mod drop;
+mod rc;
 
 fn main() {
   // vars::run();
@@ -36,5 +39,8 @@ fn main() {
   // eight::run();
   // // eight_three::run();
   // threeteen::run();
-  iteretor::run();
+  // iteretor::run();
+  // deref::run();
+  // drop::run();
+  rc::run();
 }
