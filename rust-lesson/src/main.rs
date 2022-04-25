@@ -13,8 +13,10 @@
 // mod three_five;
 // mod three;
 // mod hashmap;
-mod eight;
-mod eight_three;
+// mod eight;
+// mod eight_three;
+// mod threeteen;
+mod iteretor;
 
 fn main() {
   // vars::run();
@@ -31,6 +33,8 @@ fn main() {
   // three_five::run();
   // three::run();
   // hashmap::run();
-  eight::run();
-  eight_three::run();
+  // eight::run();
+  // // eight_three::run();
+  // threeteen::run();
+  iteretor::run();
 }
