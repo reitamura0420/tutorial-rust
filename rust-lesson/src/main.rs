@@ -19,7 +19,9 @@
 // mod iteretor;
 // mod deref;
 // mod drop;
-mod rc;
+// mod rc;
+// mod thread;
+mod oop;
 
 fn main() {
   // vars::run();
@@ -42,5 +44,8 @@ fn main() {
   // iteretor::run();
   // deref::run();
   // drop::run();
-  rc::run();
+  // rc::run();
+  // thread::run();
+  // thread::run3();
+  oop::run();
 }
