@@ -103,3 +103,14 @@ enum Message {
   NewJob(Job),
   Terminate,
 }
+
+#[cfg(test)]
+#[test]
+fn test_worker() {
+  let (sender, receiver) = mpsc::channel();
+  let receiver = Arc::new(Mutex::new(receiver));
+  let worker = Worker::new(1, receiver);
+
+  assert_eq!(worker.id, 1);
+  assert!(worker.thread.is_some());
+}
