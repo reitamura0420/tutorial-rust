@@ -21,7 +21,8 @@
 // mod drop;
 // mod rc;
 // mod thread;
-mod oop;
+// mod oop;
+mod eighteen;
 
 fn main() {
   // vars::run();
@@ -47,5 +48,14 @@ fn main() {
   // rc::run();
   // thread::run();
   // thread::run3();
-  oop::run();
+  // oop::run();
+  eighteen::run();
+  eighteen::run2();
+  eighteen::run3();
+  eighteen::run4();
+  eighteen::run5();
+  eighteen::run6();
+  eighteen::run7();
+  eighteen::run8();
+  eighteen::run9();
 }
