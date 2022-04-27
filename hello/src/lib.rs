@@ -1,3 +1,6 @@
+//! The Rust Programming Languageの20章の演習問題を扱うクレート
+//! https://doc.rust-jp.rs/book-ja/ch20-00-final-project-a-web-server.html
+
 use std::sync::mpsc;
 use std::sync::Arc;
 use std::sync::Mutex;
