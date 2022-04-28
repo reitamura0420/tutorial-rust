@@ -13,11 +13,14 @@ fn main() {
     let pool = ThreadPool::new(4);
 
     for stream in listener.incoming().take(2) {
-        let stream = stream.unwrap();
-
-        pool.execute(|| {
-            handle_connection(stream);
-        });
+        match stream {
+            Ok(s) => {
+                pool.execute(|| {
+                    handle_connection(s);
+                });
+            }
+            Err(e) => eprintln!("stream error, {}", e),
+        }
     }
 
     println!("Shutting down.");
