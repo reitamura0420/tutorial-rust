@@ -17,3 +17,11 @@ pub struct NewPost<'a> {
   pub evaluation_point: &'a str,
   pub skill_point: &'a str,
 }
+
+#[derive(AsChangeset)]
+#[table_name = "posts"]
+pub struct ChangePost<'a> {
+  pub name: Option<&'a str>,
+  pub evaluation_point: Option<&'a str>,
+  pub skill_point: Option<&'a str>,
+}

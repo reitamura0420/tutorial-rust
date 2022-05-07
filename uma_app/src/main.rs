@@ -9,7 +9,7 @@ use uma_app::ThreadPool;
 use diesel::prelude::*;
 use uma_app::*;
 
-use self::models::{NewPost, Post};
+use self::models::{ChangePost, NewPost, Post};
 
 fn main() {
     let listener = TcpListener::bind("0.0.0.0:7878").unwrap();
@@ -38,7 +38,7 @@ fn handle_connection(mut stream: TcpStream) {
     let view_html = b"GET / HTTP/1.1\r\n";
     let get_posts = b"GET /get_posts HTTP/1.1\r\n";
     let insert_posts = b"POST /insert_posts HTTP/1.1\r\n";
-    let update_posts = b"PUT /update_posts HTTP/1.1\r\n";
+    let update_posts = b"POST /update_posts HTTP/1.1\r\n";
 
     let response = if buffer.starts_with(view_html) {
         let filename = "hello.html";
@@ -56,6 +56,10 @@ fn handle_connection(mut stream: TcpStream) {
     } else if buffer.starts_with(insert_posts) {
         let status_line = "HTTP/1.1 200 /insert_posts OK\r\n\r\n";
         insert_posts_data();
+        format!("{} {}", status_line, "true")
+    } else if buffer.starts_with(update_posts) {
+        let status_line = "HTTP/1.1 200 /update_posts OK\r\n\r\n";
+        update_posts_data();
         format!("{} {}", status_line, "true")
     } else {
         let filename = "404.html";
@@ -75,21 +79,10 @@ fn handle_connection(mut stream: TcpStream) {
 fn get_posts_data() -> Vec<Post> {
     use self::schema::posts::dsl::*;
     let connection = establish_connection();
-    println!("test2");
     let result = posts
         .limit(5)
         .load::<Post>(&connection)
         .expect("Error loading posts");
-
-    // println!("Displaying {} posts", results.len());
-    // for post in results {
-    //     println!("{}", post.name);
-    //     println!("-----------\n");
-    //     println!("{}", post.evaluation_point);
-    //     println!("-----------\n");
-    //     println!("{}", post.skill_point);
-    // }
-
     result
 }
 
@@ -114,4 +107,20 @@ fn insert_posts_data() {
         .values(&new_post)
         .execute(&connection)
         .expect("Error saving new post");
+}
+
+fn update_posts_data() {
+    use self::schema::posts::dsl::posts;
+    let connection = &mut establish_connection();
+
+    let new_post = ChangePost {
+        name: Some("トウカイテイオー"),
+        skill_point: Some("10000"),
+        evaluation_point: Some("9500"),
+    };
+
+    diesel::update(posts.find(1))
+        .set(&new_post)
+        .execute(connection)
+        .expect("error");
 }
