@@ -1,0 +1,27 @@
+version: '2'
+services:
+  db:
+    image: mysql:latest
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: uma_app_db
+    ports:
+      - 3306:3306
+    volumes:
+      - ./docker/mysql:/var/lib/mysql
+    container_name: uma_app_sql
+  rust:
+    build:
+      context: .
+      dockerfile: ./docker/rust/Dockerfile
+    environment:
+      USER: root
+    ports:
+      - 3000:7878
+    command: cargo run
+    tty: true
+    volumes:
+      - ./:/uma_app
+    depends_on:
+      - db
+    container_name: umm_app

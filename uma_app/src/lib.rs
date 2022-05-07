@@ -1,10 +1,20 @@
-//! The Rust Programming Languageの20章の演習問題を扱うクレート
-//! https://doc.rust-jp.rs/book-ja/ch20-00-final-project-a-web-server.html
+#[macro_use]
+extern crate diesel;
+extern crate dotenv;
+
+pub mod models;
+pub mod schema;
+
+use diesel::prelude::*;
+use dotenv::dotenv;
+use std::env;
 
 use std::sync::mpsc;
 use std::sync::Arc;
 use std::sync::Mutex;
 use std::thread;
+
+use self::models::{NewPost, Post};
 
 trait FnBox {
   fn call_box(self: Box<Self>);
@@ -104,6 +114,14 @@ enum Message {
   Terminate,
 }
 
+pub fn establish_connection() -> MysqlConnection {
+  dotenv().ok();
+
+  let database_url = env::var("DATABASE_URL").expect("DATABASE_URL must be set");
+  MysqlConnection::establish(&database_url)
+    .unwrap_or_else(|_| panic!("Error connecting to {}", database_url))
+}
+
 #[cfg(test)]
 #[test]
 fn test_worker() {
@@ -113,4 +131,26 @@ fn test_worker() {
 
   assert_eq!(worker.id, 1);
   assert!(worker.thread.is_some());
+}
+
+pub fn create_post(
+  conn: &MysqlConnection,
+  name: &str,
+  evaluation_point: &str,
+  skill_point: &str,
+) -> Post {
+  use schema::posts;
+
+  let new_post = NewPost {
+    name,
+    evaluation_point,
+    skill_point,
+  };
+
+  diesel::insert_into(posts::table)
+    .values(&new_post)
+    .execute(conn)
+    .expect("Error saving new post");
+
+  posts::table.order(posts::id.desc()).first(conn).unwrap()
 }
