@@ -9,7 +9,6 @@ use std::str;
 use uma_app::ThreadPool;
 
 use diesel::prelude::*;
-use std::env::args;
 use uma_app::*;
 
 use self::models::{ChangePost, NewPost, Post};
@@ -82,6 +81,7 @@ fn handle_connection(mut stream: TcpStream) {
     } else if buffer.starts_with(update_posts) {
         let status_line = "HTTP/1.1 200 /update_posts OK\r\n\r\n";
         let req_msg = str::from_utf8(&buffer).unwrap();
+        println!("{}", req_msg);
         let re = Regex::new(r"id=.*$").unwrap();
         let caps = re.captures(req_msg).unwrap();
         let request_text = caps.at(0).unwrap().trim();
@@ -96,7 +96,7 @@ fn handle_connection(mut stream: TcpStream) {
                 re_before_equal.replace_all(x, "").to_string()
             })
             .collect();
-        let id: usize = format_text_list[0].parse::<usize>().unwrap();
+        let id: i32 = format_text_list[0].parse::<i32>().unwrap();
         update_posts_data(
             id,
             &format_text_list[1],
@@ -123,21 +123,20 @@ fn get_posts_data() -> Vec<Post> {
     use self::schema::posts::dsl::*;
     let connection = establish_connection();
     let result = posts
-        .limit(5)
         .load::<Post>(&connection)
         .expect("Error loading posts");
     result
 }
 
-fn insert_posts_data(uma_name: &str, skill: &str, evaluation: &str) {
+fn insert_posts_data(uma_name: &str, evaluation: &str, skill: &str) {
     use schema::posts;
 
     let connection = establish_connection();
 
     let new_post = NewPost {
         name: uma_name,
-        skill_point: skill,
         evaluation_point: evaluation,
+        skill_point: skill,
     };
 
     diesel::insert_into(posts::table)
@@ -146,23 +145,22 @@ fn insert_posts_data(uma_name: &str, skill: &str, evaluation: &str) {
         .expect("Error saving new post");
 }
 
-fn update_posts_data(id: usize, uma_name: &str, skill: &str, evaluation: &str) {
+fn update_posts_data(id: i32, uma_name: &str, evaluation: &str, skill: &str) {
     use self::schema::posts::dsl::posts;
     let connection = &mut establish_connection();
 
+    println!("{}", id);
+    println!("{}", uma_name);
+    println!("{}", evaluation);
+    println!("{}", skill);
+
     let new_post = ChangePost {
         name: Some(uma_name),
-        skill_point: Some(skill),
         evaluation_point: Some(evaluation),
+        skill_point: Some(skill),
     };
 
-    let num_id = args()
-        .nth(id)
-        .expect("publish_post requires a post id")
-        .parse::<i32>()
-        .expect("Invalid ID");
-
-    diesel::update(posts.find(num_id))
+    diesel::update(posts.find(id))
         .set(&new_post)
         .execute(connection)
         .expect("error");
