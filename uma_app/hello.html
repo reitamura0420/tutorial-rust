@@ -8,6 +8,10 @@
   </head>
   <body>
     <form action="">
+      <h1>ウマアプリ</h1>
+      <h2>所持一覧</h2>
+      <div id="get-data"></div>
+      <h2>追加</h2>
       <div class="form-row">
           <div class="form-group col-sm-6">
               <label for="inputName" class="">名前</label>
@@ -28,6 +32,44 @@
       <span id="inputAlert"></span>
     </div>
     <script>
+      jQuery(function(){
+        $.ajax({	
+          url:"http://localhost:3000/get_posts",
+          type:"GET",
+          dataType:"json",
+          timespan:1000,
+        }).done(function(data,textStatus,jqXHR) {
+          const element = document.getElementById("get-data");
+
+          const data_json = JSON.parse(data);
+          $.each(data_json,
+            function(index, v) {
+              const childElement = document.createElement("div");
+              const name = document.createElement("input");
+              name.setAttribute("type", "text");
+              name.setAttribute("id", "name" + index);
+              name.setAttribute("value", v.name);
+              childElement.appendChild(name);
+
+              const evaluation_point = document.createElement("input");
+              evaluation_point.setAttribute("type", "text");
+              evaluation_point.setAttribute("id", "evaluation_point" + index);
+              evaluation_point.setAttribute("value", v.evaluation_point);
+              childElement.appendChild(evaluation_point);
+
+              const skill_point = document.createElement("input");
+              skill_point.setAttribute("type", "text");
+              skill_point.setAttribute("id", "skill_point" + index);
+              skill_point.setAttribute("value", v.skill_point);
+              childElement.appendChild(skill_point);
+              element.appendChild(childElement);
+            }
+          );
+        }).fail(function(jqXHR, textStatus, errorThrown ) {
+          console.log("get fail");
+        });
+      });
+
       $("#btnAdd").on("click", function () {
         console.log("test");
         if ($("#inputName").val().trim().length == 0) {
@@ -61,7 +103,7 @@
           dataType:"json",
           timespan:1000,
         }).done(function(data1,textStatus,jqXHR) {
-          console.log("done")
+          document.location.reload();
         }).fail(function(jqXHR, textStatus, errorThrown ) {
           console.log("fail");
         }).always(function(){
