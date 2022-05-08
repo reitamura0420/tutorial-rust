@@ -9,6 +9,7 @@ use std::str;
 use uma_app::ThreadPool;
 
 use diesel::prelude::*;
+use std::env::args;
 use uma_app::*;
 
 use self::models::{ChangePost, NewPost, Post};
@@ -80,7 +81,28 @@ fn handle_connection(mut stream: TcpStream) {
         format!("{} {}", status_line, "true")
     } else if buffer.starts_with(update_posts) {
         let status_line = "HTTP/1.1 200 /update_posts OK\r\n\r\n";
-        update_posts_data();
+        let req_msg = str::from_utf8(&buffer).unwrap();
+        let re = Regex::new(r"id=.*$").unwrap();
+        let caps = re.captures(req_msg).unwrap();
+        let request_text = caps.at(0).unwrap().trim();
+        let request_text_list = request_text.split('&').fold(Vec::new(), |mut s, i| {
+            s.push(i.to_string());
+            s
+        });
+        let format_text_list: Vec<String> = request_text_list
+            .iter()
+            .map(|x| {
+                let re_before_equal = Regex::new(r"(.*)=").unwrap();
+                re_before_equal.replace_all(x, "").to_string()
+            })
+            .collect();
+        let id: usize = format_text_list[0].parse::<usize>().unwrap();
+        update_posts_data(
+            id,
+            &format_text_list[1],
+            &format_text_list[2],
+            &format_text_list[3],
+        );
         format!("{} {}", status_line, "true")
     } else {
         let filename = "404.html";
@@ -124,17 +146,23 @@ fn insert_posts_data(uma_name: &str, skill: &str, evaluation: &str) {
         .expect("Error saving new post");
 }
 
-fn update_posts_data() {
+fn update_posts_data(id: usize, uma_name: &str, skill: &str, evaluation: &str) {
     use self::schema::posts::dsl::posts;
     let connection = &mut establish_connection();
 
     let new_post = ChangePost {
-        name: Some("トウカイテイオー"),
-        skill_point: Some("10000"),
-        evaluation_point: Some("9500"),
+        name: Some(uma_name),
+        skill_point: Some(skill),
+        evaluation_point: Some(evaluation),
     };
 
-    diesel::update(posts.find(1))
+    let num_id = args()
+        .nth(id)
+        .expect("publish_post requires a post id")
+        .parse::<i32>()
+        .expect("Invalid ID");
+
+    diesel::update(posts.find(num_id))
         .set(&new_post)
         .execute(connection)
         .expect("error");
