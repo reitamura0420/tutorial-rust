@@ -1,9 +1,11 @@
 extern crate uma_app;
+use regex::Regex;
 use std::fs::File;
 use std::io::prelude::*;
 use std::io::Read;
 use std::net::TcpListener;
 use std::net::TcpStream;
+use std::str;
 use uma_app::ThreadPool;
 
 use diesel::prelude::*;
@@ -55,7 +57,26 @@ fn handle_connection(mut stream: TcpStream) {
         format!("{} {:?}", status_line, serialized)
     } else if buffer.starts_with(insert_posts) {
         let status_line = "HTTP/1.1 200 /insert_posts OK\r\n\r\n";
-        insert_posts_data();
+        let req_msg = str::from_utf8(&buffer).unwrap();
+        let re = Regex::new(r"name=.*$").unwrap();
+        let caps = re.captures(req_msg).unwrap();
+        let request_text = caps.at(0).unwrap().trim();
+        let request_text_list = request_text.split('&').fold(Vec::new(), |mut s, i| {
+            s.push(i.to_string());
+            s
+        });
+        let format_text_list: Vec<String> = request_text_list
+            .iter()
+            .map(|x| {
+                let re_before_equal = Regex::new(r"(.*)=").unwrap();
+                re_before_equal.replace_all(x, "").to_string()
+            })
+            .collect();
+        insert_posts_data(
+            &format_text_list[0],
+            &format_text_list[1],
+            &format_text_list[2],
+        );
         format!("{} {}", status_line, "true")
     } else if buffer.starts_with(update_posts) {
         let status_line = "HTTP/1.1 200 /update_posts OK\r\n\r\n";
@@ -86,16 +107,10 @@ fn get_posts_data() -> Vec<Post> {
     result
 }
 
-fn insert_posts_data() {
+fn insert_posts_data(uma_name: &str, skill: &str, evaluation: &str) {
     use schema::posts;
 
     let connection = establish_connection();
-
-    let uma_name = "トウカイテイオー";
-    let skill = "20000";
-    let evaluation = "19500";
-
-    println!("What would you like your title to be?");
 
     let new_post = NewPost {
         name: uma_name,

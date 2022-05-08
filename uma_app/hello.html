@@ -3,9 +3,73 @@
   <head>
     <meta charset="utf-8">
     <title>Hello!</title>
+    <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
   </head>
   <body>
-    <h1>Hello!</h1>
-    <p>Hi from Rust</p>
+    <form action="">
+      <div class="form-row">
+          <div class="form-group col-sm-6">
+              <label for="inputName" class="">名前</label>
+              <input type="text" class="form-control" id="inputName" placeholder="">
+          </div>
+          <div class="form-group col-sm-3">
+              <label for="inputLimit" class="">評価点</label>
+              <input type="text" class="form-control" id="inputEvaluationPoint" placeholder="">
+          </div>
+          <div class="form-group col-sm-3">
+            <label for="inputLimit" class="">スキル査定</label>
+            <input type="text" class="form-control" id="inputSkillPoint" placeholder="">
+        </div>
+      </div>
+      <input type="button" id="btnAdd" class="btn btn-primary mb-3" value="追加">
+    </form>
+    <div class="alert alert-warning" role="alert" id="divAlert">
+      <span id="inputAlert"></span>
+    </div>
+    <script>
+      $("#btnAdd").on("click", function () {
+        console.log("test");
+        if ($("#inputName").val().trim().length == 0) {
+          $("#divAlert").css("display", "block");
+          $("#inputAlert").text("入力してください");
+          return;
+        }
+
+        if ($("#inputEvaluationPoint").val().trim().length == 0) {
+          $("#divAlert").css("display", "block");
+          $("#inputAlert").text("入力してください");
+          return;
+        }
+
+        if ($("#inputSkillPoint").val().trim().length == 0) {
+          $("#divAlert").css("display", "block");
+          $("#inputAlert").text("入力してください");
+          return;
+        }
+
+        const postData = {
+          name: $("#inputName").val().trim(),
+          evaluation_point: $("#inputEvaluationPoint").val().trim(),
+          skill_point: $("#inputSkillPoint").val().trim(),
+        };
+
+        $.ajax({	
+          url:"http://localhost:3000/insert_posts",
+          type:"POST",
+          data: postData,
+          dataType:"json",
+          timespan:1000,
+        }).done(function(data1,textStatus,jqXHR) {
+          console.log("done")
+        }).fail(function(jqXHR, textStatus, errorThrown ) {
+          console.log("fail");
+        }).always(function(){
+          $("#inputName").val("");
+          $("#inputEvaluationPoint").val("");
+          $("#inputSkillPoint").val("");
+        });
+      });
+    </script> 
   </body>
 </html>
