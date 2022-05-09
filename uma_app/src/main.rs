@@ -1,4 +1,5 @@
 extern crate uma_app;
+use percent_encoding::percent_decode;
 use regex::Regex;
 use std::fs::File;
 use std::io::prelude::*;
@@ -73,11 +74,11 @@ fn handle_connection(mut stream: TcpStream) {
                 re_before_equal.replace_all(x, "").to_string()
             })
             .collect();
-        insert_posts_data(
-            &format_text_list[0],
-            &format_text_list[1],
-            &format_text_list[2],
-        );
+        let mut iter = percent_decode(format_text_list[0].as_bytes())
+            .decode_utf8()
+            .unwrap();
+        let name = iter.to_mut();
+        insert_posts_data(name, &format_text_list[1], &format_text_list[2]);
         format!("{} {}", status_line, "true")
     } else if buffer.starts_with(update_posts) {
         let status_line = "HTTP/1.1 200 /update_posts OK\r\n\r\n";
@@ -98,12 +99,11 @@ fn handle_connection(mut stream: TcpStream) {
             })
             .collect();
         let id: i32 = format_text_list[0].parse::<i32>().unwrap();
-        update_posts_data(
-            id,
-            &format_text_list[1],
-            &format_text_list[2],
-            &format_text_list[3],
-        );
+        let mut iter = percent_decode(format_text_list[1].as_bytes())
+            .decode_utf8()
+            .unwrap();
+        let name = iter.to_mut();
+        update_posts_data(id, name, &format_text_list[2], &format_text_list[3]);
         format!("{} {}", status_line, "true")
     } else if buffer.starts_with(delete_posts) {
         let status_line = "HTTP/1.1 200 /delete_posts OK\r\n\r\n";

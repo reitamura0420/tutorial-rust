@@ -38,6 +38,9 @@
           type:"GET",
           dataType:"json",
           timespan:1000,
+          beforeSend: function(xhr) {
+            xhr.overrideMimeType("text/html;charset=UTF-8");
+          },
         }).done(function(data,textStatus,jqXHR) {
           const element = document.getElementById("get-data");
 
@@ -110,8 +113,8 @@
 
         $.ajax({	
           url:"http://localhost:3000/insert_posts",
+          scriptCharset: 'Shift_JIS',
           type:"POST",
-          scriptCharset: 'UTF-8',
           data: postData,
           dataType:"json",
           timespan:1000,
@@ -157,7 +160,7 @@
         };
         $.ajax({	
           url:"http://localhost:3000/update_posts",
-          scriptCharset: 'UTF-8',
+          scriptCharset: 'Shift_JIS',
           type:"POST",
           data: postData,
           dataType:"json",
