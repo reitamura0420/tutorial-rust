@@ -63,11 +63,17 @@
               skill_point.setAttribute("value", v.skill_point);
               childElement.appendChild(skill_point);
 
-              const button = document.createElement("input");
-              button.setAttribute("type", "button");
-              button.setAttribute("value", "更新");
-              button.setAttribute("onclick", "btnUpdate(" + v.id + ")");
-              childElement.appendChild(button);
+              const update_button = document.createElement("input");
+              update_button.setAttribute("type", "button");
+              update_button.setAttribute("value", "更新");
+              update_button.setAttribute("onclick", "btnUpdate(" + v.id + ")");
+              childElement.appendChild(update_button);
+
+              const delete_button = document.createElement("input");
+              delete_button.setAttribute("type", "button");
+              delete_button.setAttribute("value", "削除");
+              delete_button.setAttribute("onclick", "btnDelete(" + v.id + ")");
+              childElement.appendChild(delete_button);
 
               element.appendChild(childElement);
             }
@@ -160,6 +166,21 @@
           document.location.reload();
         }).fail(function(jqXHR, textStatus, errorThrown ) {
           console.log("update fail");
+        })
+      };
+
+      function btnDelete(id) {
+        $.ajax({	
+          url:"http://localhost:3000/delete_posts",
+          scriptCharset: 'UTF-8',
+          type:"POST",
+          data: { id },
+          dataType:"json",
+          timespan:1000,
+        }).done(function(data,textStatus,jqXHR) {
+          document.location.reload();
+        }).fail(function(jqXHR, textStatus, errorThrown ) {
+          console.log("delete fail");
         })
       };
     </script> 

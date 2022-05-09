@@ -41,6 +41,7 @@ fn handle_connection(mut stream: TcpStream) {
     let get_posts = b"GET /get_posts HTTP/1.1\r\n";
     let insert_posts = b"POST /insert_posts HTTP/1.1\r\n";
     let update_posts = b"POST /update_posts HTTP/1.1\r\n";
+    let delete_posts = b"POST /delete_posts HTTP/1.1\r\n";
 
     let response = if buffer.starts_with(view_html) {
         let filename = "hello.html";
@@ -104,6 +105,21 @@ fn handle_connection(mut stream: TcpStream) {
             &format_text_list[3],
         );
         format!("{} {}", status_line, "true")
+    } else if buffer.starts_with(delete_posts) {
+        let status_line = "HTTP/1.1 200 /delete_posts OK\r\n\r\n";
+        let req_msg = str::from_utf8(&buffer).unwrap();
+        let re = Regex::new(r"id=.*$").unwrap();
+        let caps = re.captures(req_msg).unwrap();
+        let request_text = String::from(caps.at(0).unwrap().trim());
+        let re_before_equal = Regex::new(r"(.*)=").unwrap();
+        let id_str = re_before_equal.replace_all(&request_text, "").to_string();
+        let re_number_equal = Regex::new(r"\d+").unwrap();
+        let id_str2 = re_number_equal.captures(&id_str).unwrap().at(0).unwrap();
+        println!("{}", id_str2.len());
+        println!("{}", id_str2.trim().len());
+        println!("{}", String::from("1").len());
+        delete_posts_data(id_str2.parse().unwrap());
+        format!("{} {}", status_line, "true")
     } else {
         let filename = "404.html";
         let status_line = "HTTP/1.1 404 NOT FOUND\r\n\r\n";
@@ -164,4 +180,13 @@ fn update_posts_data(id: i32, uma_name: &str, evaluation: &str, skill: &str) {
         .set(&new_post)
         .execute(connection)
         .expect("error");
+}
+
+fn delete_posts_data(id: i32) {
+    use self::schema::posts::dsl::posts;
+    let connection = &mut establish_connection();
+
+    diesel::delete(posts.find(id))
+        .execute(connection)
+        .expect("Error deleting posts");
 }
