@@ -78,7 +78,13 @@ fn handle_connection(mut stream: TcpStream) {
             .decode_utf8()
             .unwrap();
         let name = iter.to_mut();
-        insert_posts_data(name, &format_text_list[1], &format_text_list[2]);
+        let re_number_equal = Regex::new(r"\d+").unwrap();
+        let score_str = re_number_equal
+            .captures(&format_text_list[2])
+            .unwrap()
+            .at(0)
+            .unwrap();
+        insert_posts_data(name, &format_text_list[1], score_str);
         format!("{} {}", status_line, "true")
     } else if buffer.starts_with(update_posts) {
         let status_line = "HTTP/1.1 200 /update_posts OK\r\n\r\n";
@@ -103,7 +109,13 @@ fn handle_connection(mut stream: TcpStream) {
             .decode_utf8()
             .unwrap();
         let name = iter.to_mut();
-        update_posts_data(id, name, &format_text_list[2], &format_text_list[3]);
+        let re_number_equal = Regex::new(r"\d+").unwrap();
+        let score_str = re_number_equal
+            .captures(&format_text_list[3])
+            .unwrap()
+            .at(0)
+            .unwrap();
+        update_posts_data(id, name, &format_text_list[2], score_str);
         format!("{} {}", status_line, "true")
     } else if buffer.starts_with(delete_posts) {
         let status_line = "HTTP/1.1 200 /delete_posts OK\r\n\r\n";
