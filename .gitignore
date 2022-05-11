@@ -2,6 +2,8 @@ rust-lesson/target/*
 **/debug/*
 guessing_game/target/*
 lib_demo/target/*
+uma_app/target/*
+uma_app/docker/*
 
 Cargo.lock
 
