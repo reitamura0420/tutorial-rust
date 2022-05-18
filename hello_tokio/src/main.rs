@@ -1,30 +1,48 @@
-use mini_redis::{client, Result};
+// use mini_redis::{client, Result};
 
 // #[tokio::main]
 // pub async fn main() -> Result<()> {
-//     let mut client = client::connect("127.0.0.1:6379").await?;
+//   // mini-redis アドレスへのコネクションを開く
+//   let mut client = client::connect("127.0.0.1:6379").await?;
 
-//     client.set("hello", "world".into()).await?;
+//   // "hello" というキーに "world" という値をセット
+//   client.set("hello", "world".into()).await?;
 
-//     let result = client.get("hello").await?;
+//   // "hello" の値を取得
+//   let result = client.get("hello").await?;
 
-//     println!("got value from the server; result={:?}", result);
+//   println!("got value from the server; result={:?}", result);
 
-//     Ok(())
+//   Ok(())
 // }
 
-async fn say_world() {
-    println!("world");
-}
+// use tokio::task;
 
-#[tokio::main]
-async fn main() {
-    // `say_world()` を呼び出しても、`say_world()` の中身は実行されない
-    let op = say_world();
+// #[tokio::main]
+// async fn main() {
+//   let v = vec![1, 2, 3];
 
-    // この println! が最初に実行される
-    println!("hello");
+//   task::spawn(async move {
+//     println!("Here's a vec: {:?}", v);
+//   });
 
-    // `op` に対して `.await` を呼び出すことで、`say_world` の中身が実行される
-    op.await;
-}
+//   // println!("Here's a vec: {:?}", v); これは所有権渡してるからエラーになる
+// }
+
+// use std::rc::Rc;
+// use tokio::task::yield_now;
+
+// #[tokio::main]
+// async fn main() {
+//   tokio::spawn(async {
+//     // { } で囲っていることにより、`rc` が `.await` の前に drop される
+//     {
+//       let rc = Rc::new("hello");
+//       println!("{}", rc);
+//     }
+
+//     // `rc` はもはや使用されない。
+//     // タスクがスケジューラに戻るときには破棄されている
+//     yield_now().await;
+//   });
+// }
