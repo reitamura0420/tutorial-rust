@@ -1,3 +1,4 @@
+use reqwest::{Client, Url};
 use std::io::prelude::*;
 use std::net::TcpListener;
 use std::net::TcpStream;
@@ -22,16 +23,36 @@ fn handle_connection(mut stream: TcpStream) {
     let sleep = b"GET /sleep HTTP/1.1\r\n";
 
     let (status_line, contents) = if buffer.starts_with(get) {
-        thread::sleep(Duration::from_secs(10));
-        ("HTTP/1.1 200 OK\r\n\r\n", "get")
-        // TODO リダイレクトでPOLに飛ぶ処理をかく
+        let client = Client::new();
+        let url = "http://127.0.0.1:8080";
+        let response = client.get(Url::parse(url).unwrap()).send();
+        match response {
+            Response => ("HTTP/1.1 200 OK\r\n\r\n", "true"),
+            Error => ("HTTP/1.1 200 OK\r\n\r\n", "error"),
+        }
     } else if buffer.starts_with(sleep) {
-        thread::sleep(Duration::from_secs(20));
-        ("HTTP/1.1 200 OK\r\n\r\n", "sleep")
-        // TODO リダイレクトでPOLに飛ぶ処理をかく
+        let client = Client::new();
+        let url = "http://127.0.0.1:8080/sleep";
+        let response = client.get(Url::parse(url).unwrap()).send();
+        match response {
+            Response => ("HTTP/1.1 200 OK\r\n\r\n", "true"),
+            Error => ("HTTP/1.1 200 OK\r\n\r\n", "error"),
+        }
     } else {
         ("HTTP/1.1 404 NOT FOUND\r\n\r\n", "404")
     };
+
+    // let (status_line, contents) = if buffer.starts_with(get) {
+    //     thread::sleep(Duration::from_secs(10));
+    //     ("HTTP/1.1 200 OK\r\n\r\n", "get")
+    //     // TODO リダイレクトでPOLに飛ぶ処理をかく
+    // } else if buffer.starts_with(sleep) {
+    //     thread::sleep(Duration::from_secs(20));
+    //     ("HTTP/1.1 200 OK\r\n\r\n", "sleep")
+    //     // TODO リダイレクトでPOLに飛ぶ処理をかく
+    // } else {
+    //     ("HTTP/1.1 404 NOT FOUND\r\n\r\n", "404")
+    // };
 
     let response = format!("{}{}", status_line, contents);
 
