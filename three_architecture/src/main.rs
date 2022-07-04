@@ -1,6 +1,12 @@
-mod presentation;
 use actix_web::{App, HttpServer};
-use presentation::tasks::*;
+extern crate diesel;
+use presentation::presentation_tasks::*;
+
+mod data_access;
+mod items;
+mod model;
+mod presentation;
+mod schema;
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {

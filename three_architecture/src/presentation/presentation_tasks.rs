@@ -1,12 +1,13 @@
-use crate::item::tasks::*;
 use actix_web::{delete, get, post, put, web::Json, HttpResponse, Responder};
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 
-#[derive(Deserialize)]
+use crate::items::item_tasks::register_tasks;
+
+#[derive(Serialize, Deserialize, Debug)]
 pub struct RequestTask {
-    name: String,
-    user_id: i32,
-    term: String,
+    pub name: String,
+    pub user_id: i32,
+    pub term: String,
 }
 
 #[get("/")]
@@ -15,7 +16,12 @@ async fn get() -> impl Responder {
 }
 #[post("/")]
 async fn post(task: Json<RequestTask>) -> impl Responder {
-    registerTasks();
+    let to_task = RequestTask {
+        name: task.name.clone(),
+        user_id: task.user_id,
+        term: task.term.clone(),
+    };
+    register_tasks(to_task);
     HttpResponse::Ok().body("ok")
 }
 #[put("/")]
