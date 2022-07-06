@@ -1,6 +1,9 @@
 use actix_web::{App, HttpServer};
+#[macro_use]
 extern crate diesel;
-use presentation::presentation_tasks::*;
+extern crate chrono;
+use presentation::tasks::*;
+use presentation::users::*;
 
 mod data_access;
 mod items;
@@ -12,13 +15,14 @@ mod schema;
 async fn main() -> std::io::Result<()> {
     HttpServer::new(|| {
         App::new()
-            .service(get)
-            .service(post)
-            .service(put)
-            .service(delete)
+            .service(get_tasks)
+            .service(post_tasks)
+            .service(get_users)
+            .service(post_users)
+            .service(update_disabled)
     })
     // ローカルホストのport8080で起動
-    .bind("127.0.0.1:8080")?
+    .bind("0.0.0.0:8080")?
     .run()
     .await
 }
