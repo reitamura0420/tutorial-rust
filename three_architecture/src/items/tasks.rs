@@ -7,3 +7,8 @@ pub fn register_tasks(task: RequestTask) -> bool {
     crate::data_access::tasks::insert_tasks(task);
     true
 }
+
+pub fn update_schedules(id: i32) -> bool {
+    crate::data_access::tasks::update_schedules(id);
+    true
+}

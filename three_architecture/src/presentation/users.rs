@@ -16,6 +16,7 @@ pub struct RequestUserDisabled {
 async fn get_users() -> impl Responder {
     HttpResponse::Ok().body("get ok")
 }
+
 #[post("/users")]
 async fn post_users(request: Json<RequestUser>) -> impl Responder {
     let to_user = RequestUser {
@@ -25,6 +26,7 @@ async fn post_users(request: Json<RequestUser>) -> impl Responder {
     crate::items::users::register_users(to_user);
     HttpResponse::Ok().body("ok")
 }
+
 #[post("/users/disabled")]
 async fn update_disabled(request: Json<RequestUserDisabled>) -> impl Responder {
     crate::items::users::update_disabled(request.id);

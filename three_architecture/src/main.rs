@@ -20,6 +20,7 @@ async fn main() -> std::io::Result<()> {
             .service(get_users)
             .service(post_users)
             .service(update_disabled)
+            .service(update_schedules)
     })
     // ローカルホストのport8080で起動
     .bind("0.0.0.0:8080")?

@@ -40,19 +40,20 @@ pub fn update_schedules(request: i32) -> bool {
     use crate::schema::tasks::dsl::tasks;
     use crate::schema::tasks::*;
     let connection = establish_connection();
-
     let term_data = tasks
-        .filter(id.eq(request))
         .select(term)
-        .first(&connection)
+        .filter(id.eq(request))
+        .load::<NaiveDateTime>(&connection)
         .unwrap();
 
-    let term_updated = term_data - chrono::Duration::days(1);
+    let to_date = term_data.get(0).unwrap().clone();
+
+    let term_updated = to_date + chrono::Duration::days(1);
 
     diesel::update(tasks.find(request))
         .set((
             update_term_count.eq(update_term_count + 1),
-            // term.eq(term_updated),
+            term.eq(term_updated),
         ))
         .execute(&connection)
         .expect("Error saving new post");
