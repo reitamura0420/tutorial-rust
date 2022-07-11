@@ -1,4 +1,4 @@
-version: '2'
+version: "2"
 services:
   db:
     image: mysql:latest
@@ -17,7 +17,7 @@ services:
     environment:
       USER: root
     ports:
-      - 3000:8080
+      - 8080:8080
     command: cargo run
     tty: true
     volumes:
