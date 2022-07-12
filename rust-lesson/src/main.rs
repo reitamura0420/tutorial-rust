@@ -2,7 +2,7 @@
 // mod vars;
 // mod ownership;
 // mod generics;
-// mod lifetime;
+mod lifetime;
 // mod structs;
 // mod enums;
 // mod traits;
@@ -22,14 +22,14 @@
 // mod rc;
 // mod thread;
 // mod oop;
-mod eighteen;
+// mod eighteen;
 
 fn main() {
   // vars::run();
   // stack_heap::run();
   // ownership::run();
   // generics::run();
-  // lifetime::run();
+  lifetime::run();
   // structs::run();
   // enums::run();
   // traits::run();
@@ -49,13 +49,13 @@ fn main() {
   // thread::run();
   // thread::run3();
   // oop::run();
-  eighteen::run();
-  eighteen::run2();
-  eighteen::run3();
-  eighteen::run4();
-  eighteen::run5();
-  eighteen::run6();
-  eighteen::run7();
-  eighteen::run8();
-  eighteen::run9();
+  // eighteen::run();
+  // eighteen::run2();
+  // eighteen::run3();
+  // eighteen::run4();
+  // eighteen::run5();
+  // eighteen::run6();
+  // eighteen::run7();
+  // eighteen::run8();
+  // eighteen::run9();
 }

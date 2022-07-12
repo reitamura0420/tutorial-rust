@@ -4,9 +4,13 @@ guessing_game/target/*
 lib_demo/target/*
 uma_app/target/*
 uma_app/docker/*
+**/target/*
+**/docker/*
 
 Cargo.lock
 
 **/*.rs.bk
 
 *.pdb
+
+.vscode

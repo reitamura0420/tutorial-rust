@@ -11,6 +11,11 @@ pub fn run() {
     res2 = get_longest(&st3, &st4);
     println!("{}", res2);
   }
+
+  let mut x = String::from("x");
+  let y = &mut x;
+  let z = &mut x;
+  println!("{}, {}", y, z);
 }
 
 fn get_longest<'a>(x: &'a str, y: &'a str) -> &'a str {

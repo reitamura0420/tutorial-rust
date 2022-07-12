@@ -25,7 +25,7 @@ fn handle_connection(mut stream: TcpStream) {
     let (status_line, contents) = if buffer.starts_with(get) {
         let client = Client::new();
         let url = "http://127.0.0.1:8080";
-        let response = client.get(Url::parse(url).unwrap()).send();
+        let response = client.get(Url::parse(url).unwrap()).send(); // futureオブジェクトを返す(jsでいうPromise) rust, java, scalaのfuture=非同期と認識すべし。
         match response {
             Response => ("HTTP/1.1 200 OK\r\n\r\n", "true"),
             Error => ("HTTP/1.1 200 OK\r\n\r\n", "error"),
