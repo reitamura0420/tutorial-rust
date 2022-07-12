@@ -1,13 +1,17 @@
 extern crate rand;
 
-use rand::Rng;
+use rand::{thread_rng, Rng};
 
-use rand::distributions::Uniform;
+use rand::distributions::{Alphanumeric, Standard, Uniform};
 use rand::prelude::Distribution;
+use std::iter::Iterator;
 
 fn main() {
     generate_rand();
     range_rand();
+    custom_rand();
+    char_rand();
+    password_rand();
 }
 
 fn generate_rand() {
@@ -40,4 +44,58 @@ fn range_rand() {
             break;
         }
     }
+}
+
+#[derive(Debug)] // fmt::Debugを継承できる。端的に言うとprintln!を使うことができる。
+struct Point {
+    x: i32,
+    y: i32,
+}
+
+// ユーザ定義型をランダムに生成する時はStandardを継承させる
+impl Distribution<Point> for Standard {
+    fn sample<R: Rng + ?Sized>(&self, rng: &mut R) -> Point {
+        let (rand_x, rand_y) = rng.gen();
+        Point {
+            x: rand_x,
+            y: rand_y,
+        }
+    }
+}
+
+fn custom_rand() {
+    let mut rng = rand::thread_rng();
+    let rand_tuple: (i32, bool, f64) = rng.gen();
+    let rand_point: Point = rng.gen(); // gen()はsampleが呼ばれる
+
+    println!("Random tuple: {:?}", rand_tuple);
+    println!("Random Point: {:?}", rand_point);
+}
+
+fn char_rand() {
+    let rng: String = thread_rng()
+        .sample_iter(&Alphanumeric)
+        .take(30)
+        .map(char::from) // u8からcharに変換する必要がある。https://docs.rs/rand/0.8.5/rand/distributions/trait.Distribution.html#method.sample_iter
+        .collect();
+
+    println!("string: {}", rng);
+}
+
+fn password_rand() {
+    const CHARSET: &[u8] = b"ABCDEFGHIJKLMNOPQRSTUVWXYZ\
+                            abcdefghijklmnopqrstuvwxyz\
+                            0123456789)(*&^%$#@!~"; // constは型の指定が必要
+    const PASSWORD_LEN: usize = 30;
+    let mut rng = rand::thread_rng();
+
+    let password: String = (0..PASSWORD_LEN)
+        .map(|_| {
+            let idx = rng.gen_range(0..CHARSET.len());
+            // This is safe because `idx` is in range of `CHARSET`
+            char::from(unsafe { *CHARSET.get_unchecked(idx) })
+        })
+        .collect();
+
+    println!("password: {:?}", password);
 }
