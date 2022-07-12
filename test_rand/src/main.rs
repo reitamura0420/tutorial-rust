@@ -91,9 +91,8 @@ fn password_rand() {
 
     let password: String = (0..PASSWORD_LEN)
         .map(|_| {
-            let idx = rng.gen_range(0..CHARSET.len());
-            // This is safe because `idx` is in range of `CHARSET`
-            char::from(unsafe { *CHARSET.get_unchecked(idx) })
+            let idx = rng.gen_range(0..CHARSET.len()); // lenを指定することで範囲内にCHARSETの範囲内を取得するようにする
+            char::from(unsafe { *CHARSET.get_unchecked(idx) }) // ここでは境界チェックを使わない
         })
         .collect();
 
